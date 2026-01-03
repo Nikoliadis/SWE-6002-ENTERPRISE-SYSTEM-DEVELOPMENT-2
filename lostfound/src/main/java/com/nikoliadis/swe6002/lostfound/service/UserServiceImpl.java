@@ -6,6 +6,8 @@ import com.nikoliadis.swe6002.lostfound.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -36,6 +38,40 @@ public class UserServiceImpl implements UserService {
         user.setRole("ROLE_USER");
 
         userRepository.save(user);
-        return null; // null = success
+        return null;
+    }
+
+    // ===================== ADMIN =====================
+
+    @Override
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public void toggleRole(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        if ("ROLE_ADMIN".equals(user.getRole())) {
+            user.setRole("ROLE_USER");
+        } else {
+            user.setRole("ROLE_ADMIN");
+        }
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void deleteUser(Long userId, String currentUsername) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found: " + userId));
+
+        // Safety: μην μπορεί ο admin να σβήσει τον εαυτό του κατά λάθος
+        if (user.getUsername().equals(currentUsername)) {
+            throw new RuntimeException("You cannot delete your own account.");
+        }
+
+        userRepository.delete(user);
     }
 }

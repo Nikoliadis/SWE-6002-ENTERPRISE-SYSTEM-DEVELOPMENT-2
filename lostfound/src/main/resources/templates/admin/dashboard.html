@@ -5,13 +5,54 @@
     <title>Admin Dashboard</title>
 </head>
 <body>
-<h1>Admin Dashboard</h1>
-<p>Welcome Admin!</p>
 
-<a th:href="@{/home}">Go to Home</a>
+<h1>Admin Dashboard</h1>
+
+<p th:if="${error}" style="color:red;" th:text="${error}"></p>
+
+<p>
+    <a th:href="@{/home}">Go to Home</a>
+</p>
 
 <form th:action="@{/logout}" method="post">
     <button type="submit">Logout</button>
 </form>
+
+<h2>Users</h2>
+
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th>Change Role</th>
+        <th>Delete</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.username}"></td>
+        <td th:text="${u.email}"></td>
+        <td th:text="${u.role}"></td>
+
+        <td>
+            <form th:action="@{|/admin/users/${u.id}/toggle-role|}" method="post">
+                <button type="submit">Toggle USER/ADMIN</button>
+            </form>
+        </td>
+
+        <td>
+            <form th:action="@{|/admin/users/${u.id}/delete|}" method="post"
+                  onsubmit="return confirm('Delete this user?');">
+                <button type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
 </body>
 </html>
