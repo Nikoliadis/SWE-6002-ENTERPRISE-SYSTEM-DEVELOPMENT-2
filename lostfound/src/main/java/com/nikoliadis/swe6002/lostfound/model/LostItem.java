@@ -20,6 +20,11 @@ public class LostItem {
     @Column(length = 120)
     private String location;
 
+    // ✅ LOST / FOUND
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_type", nullable = false)
+    private ItemType type;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -30,7 +35,7 @@ public class LostItem {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Getters / Setters
+    // --- Getters / Setters ---
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -42,6 +47,9 @@ public class LostItem {
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
+
+    public ItemType getType() { return type; }
+    public void setType(ItemType type) { this.type = type; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

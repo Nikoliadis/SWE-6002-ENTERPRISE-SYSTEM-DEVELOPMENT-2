@@ -77,6 +77,7 @@
     <table>
         <tr>
             <th>ID</th>
+            <th>Type</th>
             <th>Title</th>
             <th>Location</th>
             <th>Created</th>
@@ -85,13 +86,17 @@
             <th>Delete</th>
         </tr>
 
+
         <tr th:each="it : ${items}">
             <td th:text="${it.id}"></td>
+
+            <td th:text="${it.type}"></td>
+
             <td th:text="${it.title}"></td>
             <td th:text="${it.location}"></td>
             <td th:text="${it.createdAt}"></td>
 
-            <!-- επειδή είναι LAZY, αν σου βγάλει θέμα, λέω πιο κάτω τι κάνουμε -->
+
             <td th:text="${it.user != null ? it.user.username : 'N/A'}"></td>
 
             <td>

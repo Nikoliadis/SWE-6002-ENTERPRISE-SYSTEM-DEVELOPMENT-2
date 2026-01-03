@@ -1,5 +1,6 @@
 package com.nikoliadis.swe6002.lostfound.service;
 
+import com.nikoliadis.swe6002.lostfound.model.ItemType;
 import com.nikoliadis.swe6002.lostfound.model.LostItem;
 import com.nikoliadis.swe6002.lostfound.model.User;
 import com.nikoliadis.swe6002.lostfound.repository.LostItemRepository;
@@ -26,15 +27,20 @@ public class LostItemServiceImpl implements LostItemService {
     }
 
     @Override
-    public LostItem create(String title, String description, String location, MultipartFile image, User user) {
+    public LostItem create(String title,
+                           String description,
+                           String location,
+                           ItemType type,
+                           MultipartFile image,
+                           User user) {
 
         LostItem item = new LostItem();
         item.setTitle(title);
         item.setDescription(description);
         item.setLocation(location);
+        item.setType(type);
         item.setUser(user);
 
-        // handle image (optional)
         if (image != null && !image.isEmpty()) {
             String contentType = image.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
@@ -53,11 +59,8 @@ public class LostItemServiceImpl implements LostItemService {
                 Files.createDirectories(dir);
 
                 Path target = dir.resolve(filename);
-
-                // ✅ σωστό: MultipartFile -> getInputStream()
                 Files.copy(image.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
 
-                // URL path που θα σερβίρεται
                 item.setImagePath("/uploads/" + filename);
 
             } catch (IOException e) {

@@ -1,6 +1,7 @@
 package com.nikoliadis.swe6002.lostfound.controller;
 
 import com.nikoliadis.swe6002.lostfound.model.User;
+import com.nikoliadis.swe6002.lostfound.model.ItemType;
 import com.nikoliadis.swe6002.lostfound.service.LostItemService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,11 +28,13 @@ public class LostItemController {
     public String create(@RequestParam String title,
                          @RequestParam(required = false) String description,
                          @RequestParam(required = false) String location,
-                         @RequestParam(required = false, name = "image") MultipartFile image,
+                         @RequestParam("type") ItemType type,
+                         @RequestParam(required = false) MultipartFile image,
                          @AuthenticationPrincipal User currentUser,
                          Model model) {
+
         try {
-            lostItemService.create(title, description, location, image, currentUser);
+            lostItemService.create(title, description, location, type, image, currentUser);
             return "redirect:/home?created";
         } catch (RuntimeException ex) {
             model.addAttribute("error", ex.getMessage());
