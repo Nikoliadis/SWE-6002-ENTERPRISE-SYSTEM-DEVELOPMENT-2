@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Lost Item</title>
+</head>
+<body>
+
+<h1>Create Lost Item</h1>
+
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+
+<form th:action="@{/lost-items/create}" method="post" enctype="multipart/form-data">
+    <div>
+        <label>Title</label><br/>
+        <input type="text" name="title" required />
+    </div>
+
+    <div>
+        <label>Description</label><br/>
+        <textarea name="description" rows="5" cols="50"></textarea>
+    </div>
+
+    <div>
+        <label>Location</label><br/>
+        <input type="text" name="location" />
+    </div>
+
+    <div>
+        <label>Image (optional)</label><br/>
+        <input type="file" name="image" accept="image/*"/>
+    </div>
+
+    <button type="submit">Create</button>
+</form>
+
+<p><a th:href="@{/home}">Back to Home</a></p>
+
+</body>
+</html>

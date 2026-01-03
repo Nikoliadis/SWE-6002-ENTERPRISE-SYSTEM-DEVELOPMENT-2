@@ -67,7 +67,6 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
 
-        // Safety: μην μπορεί ο admin να σβήσει τον εαυτό του κατά λάθος
         if (user.getUsername().equals(currentUsername)) {
             throw new RuntimeException("You cannot delete your own account.");
         }
