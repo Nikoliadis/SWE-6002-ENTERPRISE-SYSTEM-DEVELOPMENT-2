@@ -3,32 +3,29 @@ package com.nikoliadis.swe6002.lostfound.config;
 import com.nikoliadis.swe6002.lostfound.model.User;
 import com.nikoliadis.swe6002.lostfound.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
-@Configuration
-public class DataInitializer {
+@Component
+public class DataInitializer implements CommandLineRunner {
 
-    @Bean
-    CommandLineRunner initAdmin(UserRepository userRepository,
-                                PasswordEncoder passwordEncoder) {
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-        return args -> {
-            if (userRepository.findByUsername("admin").isEmpty()) {
+    public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
-                User admin = new User();
-                admin.setUsername("admin");
-                admin.setEmail("admin@lostfound.com");
-                admin.setPassword(passwordEncoder.encode("admin123"));
-                admin.setRole("ROLE_ADMIN");
-
-                userRepository.save(admin);
-
-                System.out.println("✅ Admin user created");
-            } else {
-                System.out.println("ℹ️ Admin already exists");
-            }
-        };
+    @Override
+    public void run(String... args) {
+        if (!userRepository.existsByUsername("admin")) {
+            User admin = new User();
+            admin.setUsername("admin");
+            admin.setEmail("admin@lostfound.com");
+            admin.setPassword(passwordEncoder.encode("Admin123!"));
+            admin.setRole("ROLE_ADMIN");
+            userRepository.save(admin);
+        }
     }
 }

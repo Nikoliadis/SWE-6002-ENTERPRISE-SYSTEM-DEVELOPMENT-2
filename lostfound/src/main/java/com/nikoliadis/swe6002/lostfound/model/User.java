@@ -50,7 +50,6 @@ public class User implements UserDetails {
     // --- UserDetails required methods ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // αν το role είναι null, βάλε default
         String r = (role == null || role.isBlank()) ? "ROLE_USER" : role;
         return List.of(new SimpleGrantedAuthority(r));
     }
