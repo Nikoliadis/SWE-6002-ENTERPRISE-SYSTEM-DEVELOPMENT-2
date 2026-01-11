@@ -1,5 +1,6 @@
 package com.nikoliadis.swe6002.lostfound.service;
 
+import com.nikoliadis.swe6002.lostfound.model.ItemStatus;
 import com.nikoliadis.swe6002.lostfound.model.ItemType;
 import com.nikoliadis.swe6002.lostfound.model.LostItem;
 import com.nikoliadis.swe6002.lostfound.model.User;
@@ -12,10 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
-import java.util.UUID;
 import java.util.Optional;
-
-
+import java.util.UUID;
 
 @Service
 public class LostItemServiceImpl implements LostItemService {
@@ -42,6 +41,7 @@ public class LostItemServiceImpl implements LostItemService {
         item.setDescription(description);
         item.setLocation(location);
         item.setType(type);
+        item.setStatus(ItemStatus.OPEN);
         item.setUser(user);
 
         if (image != null && !image.isEmpty()) {
@@ -90,17 +90,31 @@ public class LostItemServiceImpl implements LostItemService {
     }
 
     @Override
+    public List<LostItem> findByUser(User user) {
+        return lostItemRepository.findByUser(user);
+    }
+
+    @Override
     public Optional<LostItem> findById(Long id) {
         return lostItemRepository.findById(id);
     }
 
     @Override
-    public List<LostItem> findByUser(User user) {
-        return lostItemRepository.findByUserOrderByCreatedAtDesc(user);
+    public void deleteById(Long id) {
+        lostItemRepository.deleteById(id);
     }
 
     @Override
-    public void deleteById(Long id) {
-        lostItemRepository.deleteById(id);
+    public void toggleStatus(Long id) {
+        LostItem item = lostItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        if (item.getStatus() == null || item.getStatus() == ItemStatus.OPEN) {
+            item.setStatus(ItemStatus.RESOLVED);
+        } else {
+            item.setStatus(ItemStatus.OPEN);
+        }
+
+        lostItemRepository.save(item);
     }
 }

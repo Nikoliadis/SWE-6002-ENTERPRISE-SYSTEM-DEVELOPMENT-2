@@ -12,6 +12,8 @@
         .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; }
         .lost { font-weight:bold; }
         .found { font-weight:bold; }
+        .open { font-weight:bold; }
+        .resolved { font-weight:bold; }
         img { width:100%; max-height:180px; object-fit:cover; border-radius:8px; border:1px solid #000; }
         .muted { opacity:0.75; font-size: 13px; }
     </style>
@@ -24,7 +26,8 @@
 
     <a th:href="@{/lost-items/create}">Create Item</a>
 
-    <a th:href="@{/my-items}">My Items</a>
+    <!-- ✅ σωστό route σύμφωνα με LostItemController: /lost-items/my-items -->
+    <a th:href="@{/lost-items/my-items}">My Items</a>
 
     <a th:href="@{/admin/dashboard(tab='users')}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
 
@@ -43,10 +46,14 @@
 
 <div class="grid">
     <div class="card" th:each="it : ${items}">
-        <div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <span class="badge"
                   th:text="${it.type}"
-                  th:classappend="${it.type.name() == 'LOST'} ? 'lost' : 'found'"></span>
+                  th:classappend="${it.type != null && it.type.name() == 'LOST'} ? 'lost' : 'found'"></span>
+
+            <span class="badge"
+                  th:text="${it.status}"
+                  th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
         </div>
 
         <h3 th:text="${it.title}" style="margin:8px 0;"></h3>

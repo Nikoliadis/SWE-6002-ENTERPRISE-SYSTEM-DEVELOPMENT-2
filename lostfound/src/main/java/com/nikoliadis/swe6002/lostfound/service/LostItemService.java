@@ -28,4 +28,6 @@ public interface LostItemService {
     Optional<LostItem> findById(Long id);
 
     void deleteById(Long id);
+
+    void toggleStatus(Long id);
 }

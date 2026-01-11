@@ -78,4 +78,30 @@ public class LostItemController {
         lostItemService.deleteById(id);
         return "redirect:/lost-items/my-items?deleted";
     }
+
+    // ✅ Toggle Status: POST /lost-items/{id}/toggle-status
+    @PostMapping("/{id}/toggle-status")
+    public String toggleStatus(@PathVariable Long id,
+                               @AuthenticationPrincipal User currentUser) {
+
+        var opt = lostItemService.findById(id);
+        if (opt.isEmpty()) {
+            return "redirect:/lost-items/my-items?error=notfound";
+        }
+
+        var item = opt.get();
+
+        boolean isOwner = item.getUser() != null
+                && item.getUser().getId().equals(currentUser.getId());
+
+        boolean isAdmin = currentUser.getRole() != null
+                && currentUser.getRole().equals("ROLE_ADMIN");
+
+        if (!isOwner && !isAdmin) {
+            return "redirect:/lost-items/my-items?error=forbidden";
+        }
+
+        lostItemService.toggleStatus(id);
+        return "redirect:/lost-items/my-items?statusChanged";
+    }
 }

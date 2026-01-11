@@ -11,31 +11,30 @@ public class LostItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 120)
     private String title;
 
-    @Column(length = 500)
     private String description;
 
-    @Column(length = 120)
     private String location;
 
-    // ✅ LOST / FOUND
     @Enumerated(EnumType.STRING)
     @Column(name = "item_type", nullable = false)
     private ItemType type;
 
-    @Column(name = "created_at", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ItemStatus status;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "image_path", length = 255)
     private String imagePath;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    // --- Getters / Setters ---
+    // Getters / Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -48,14 +47,17 @@ public class LostItem {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
-    public ItemType getType() { return type; }
-    public void setType(ItemType type) { this.type = type; }
-
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+
+    public ItemType getType() { return type; }
+    public void setType(ItemType type) { this.type = type; }
+
+    public ItemStatus getStatus() { return status; }
+    public void setStatus(ItemStatus status) { this.status = status; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

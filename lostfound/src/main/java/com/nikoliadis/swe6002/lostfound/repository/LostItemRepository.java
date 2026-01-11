@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface LostItemRepository extends JpaRepository<LostItem, Long> {
 
+    List<LostItem> findByUser(User user);
+
     List<LostItem> findAllByOrderByCreatedAtDesc();
 
     List<LostItem> findByTypeOrderByCreatedAtDesc(ItemType type);
-
-    List<LostItem> findByUserOrderByCreatedAtDesc(User user);
 }
