@@ -104,4 +104,66 @@ public class LostItemController {
         lostItemService.toggleStatus(id);
         return "redirect:/lost-items/my-items?statusChanged";
     }
+
+    @GetMapping("/{id}/edit")
+    public String editForm(@PathVariable Long id,
+                           @AuthenticationPrincipal User currentUser,
+                           Model model) {
+
+        Optional<LostItem> opt = lostItemService.findById(id);
+        if (opt.isEmpty()) {
+            return "redirect:/home?error=notfound";
+        }
+
+        LostItem item = opt.get();
+
+        boolean isOwner = item.getUser() != null
+                && item.getUser().getId().equals(currentUser.getId());
+
+        boolean isAdmin = currentUser.getRole() != null
+                && currentUser.getRole().equals("ROLE_ADMIN");
+
+        if (!isOwner && !isAdmin) {
+            return "redirect:/home?error=forbidden";
+        }
+
+        model.addAttribute("item", item);
+        return "lostitems/edit";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String edit(@PathVariable Long id,
+                       @RequestParam String title,
+                       @RequestParam(required = false) String description,
+                       @RequestParam(required = false) String location,
+                       @RequestParam("type") ItemType type,
+                       @AuthenticationPrincipal User currentUser,
+                       Model model) {
+
+        Optional<LostItem> opt = lostItemService.findById(id);
+        if (opt.isEmpty()) {
+            return "redirect:/home?error=notfound";
+        }
+
+        LostItem item = opt.get();
+
+        boolean isOwner = item.getUser() != null
+                && item.getUser().getId().equals(currentUser.getId());
+
+        boolean isAdmin = currentUser.getRole() != null
+                && currentUser.getRole().equals("ROLE_ADMIN");
+
+        if (!isOwner && !isAdmin) {
+            return "redirect:/home?error=forbidden";
+        }
+
+        try {
+            lostItemService.update(id, title, description, location, type);
+            return "redirect:/items/" + id + "?updated";
+        } catch (RuntimeException ex) {
+            model.addAttribute("error", ex.getMessage());
+            model.addAttribute("item", item);
+            return "lostitems/edit";
+        }
+    }
 }

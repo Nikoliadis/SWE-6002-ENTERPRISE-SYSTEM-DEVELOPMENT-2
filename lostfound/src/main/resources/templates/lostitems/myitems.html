@@ -7,6 +7,14 @@
         table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 6px; }
         img { max-width: 120px; height: auto; display: block; }
         .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; }
+
+        .badge {
+            font-weight:bold;
+        }
+
+        /* STATUS COLORS */
+        .open { color:#0a7a0a; border-color:#0a7a0a; }
+        .resolved { color:#b00020; border-color:#b00020; }
     </style>
 </head>
 <body>
@@ -31,14 +39,24 @@
         <th>Location</th>
         <th>Created</th>
         <th>Image</th>
+        <th>Edit</th>
         <th>Toggle Status</th>
         <th>Delete</th>
     </tr>
 
     <tr th:each="it : ${items}">
         <td th:text="${it.id}"></td>
-        <td><span class="badge" th:text="${it.type}"></span></td>
-        <td><span class="badge" th:text="${it.status}"></span></td>
+
+        <td>
+            <span class="badge" th:text="${it.type}"></span>
+        </td>
+
+        <td>
+            <span class="badge"
+                  th:text="${it.status}"
+                  th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
+        </td>
+
         <td th:text="${it.title}"></td>
         <td th:text="${it.location}"></td>
         <td th:text="${it.createdAt}"></td>
@@ -46,6 +64,10 @@
         <td>
             <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
             <span th:if="${it.imagePath == null}">No image</span>
+        </td>
+
+        <td>
+            <a th:href="@{/lost-items/{id}/edit(id=${it.id})}">Edit</a>
         </td>
 
         <td>

@@ -127,4 +127,31 @@ public class LostItemServiceImpl implements LostItemService {
 
         lostItemRepository.save(item);
     }
+
+    @Override
+    public LostItem update(Long id,
+                           String title,
+                           String description,
+                           String location,
+                           ItemType type) {
+
+        LostItem item = lostItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        item.setTitle(title);
+        item.setDescription(description);
+        item.setLocation(location);
+        item.setType(type);
+
+        return lostItemRepository.save(item);
+    }
+
+    @Override
+    public List<LostItem> search(String q) {
+        if (q == null || q.trim().isEmpty()) {
+            return lostItemRepository.findAllByOrderByCreatedAtDesc();
+        }
+        String s = q.trim();
+        return lostItemRepository.findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCaseOrderByCreatedAtDesc(s, s);
+    }
 }

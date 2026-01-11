@@ -13,12 +13,16 @@
         .lost { }
         .found { }
 
-        /* ✅ STATUS COLORS */
+        /* STATUS COLORS */
         .open { color:#0a7a0a; border-color:#0a7a0a; }
         .resolved { color:#b00020; border-color:#b00020; }
 
         img { width:100%; max-height:180px; object-fit:cover; border-radius:8px; border:1px solid #000; }
         .muted { opacity:0.75; font-size: 13px; }
+
+        /* Search */
+        .search { display:flex; gap:8px; align-items:center; margin: 12px 0; }
+        .search input[type="text"] { padding:6px; width: 280px; }
     </style>
 </head>
 <body>
@@ -38,23 +42,34 @@
 </div>
 
 <div class="filters">
-    <!-- Type filters (κρατάνε το status) -->
-    <a th:href="@{/home(type='ALL', status=${selectedStatus})}"
+    <!-- Type filters (κρατάνε το status + q) -->
+    <a th:href="@{/home(type='ALL', status=${selectedStatus}, q=${q})}"
        th:classappend="${selectedType == 'ALL'} ? 'active' : ''">All</a>
 
-    <a th:href="@{/home(type='LOST', status=${selectedStatus})}"
+    <a th:href="@{/home(type='LOST', status=${selectedStatus}, q=${q})}"
        th:classappend="${selectedType == 'LOST'} ? 'active' : ''">Lost</a>
 
-    <a th:href="@{/home(type='FOUND', status=${selectedStatus})}"
+    <a th:href="@{/home(type='FOUND', status=${selectedStatus}, q=${q})}"
        th:classappend="${selectedType == 'FOUND'} ? 'active' : ''">Found</a>
 
-    <!-- Status filters (κρατάνε το type) -->
-    <a th:href="@{/home(type=${selectedType}, status='OPEN')}"
+    <!-- Status filters (κρατάνε το type + q) -->
+    <a th:href="@{/home(type=${selectedType}, status='OPEN', q=${q})}"
        th:classappend="${selectedStatus == 'OPEN'} ? 'active' : ''">OPEN only</a>
 
-    <a th:href="@{/home(type=${selectedType}, status='ALL')}"
+    <a th:href="@{/home(type=${selectedType}, status='ALL', q=${q})}"
        th:classappend="${selectedStatus == 'ALL'} ? 'active' : ''">Any status</a>
 </div>
+
+<!-- ✅ Basic Search (title OR location) -->
+<form class="search" th:action="@{/home}" method="get">
+    <input type="hidden" name="type" th:value="${selectedType}" />
+    <input type="hidden" name="status" th:value="${selectedStatus}" />
+
+    <input type="text" name="q" placeholder="Search by title or location..." th:value="${q}" />
+    <button type="submit">Search</button>
+
+    <a th:href="@{/home(type=${selectedType}, status=${selectedStatus})}">Clear</a>
+</form>
 
 <hr/>
 

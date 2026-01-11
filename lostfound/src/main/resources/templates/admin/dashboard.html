@@ -20,14 +20,8 @@
         }
 
         /* STATUS COLORS */
-        .open {
-            color: #0a7a0a;
-            border-color: #0a7a0a;
-        }
-        .resolved {
-            color: #b00020;
-            border-color: #b00020;
-        }
+        .open { color: #0a7a0a; border-color: #0a7a0a; }
+        .resolved { color: #b00020; border-color: #b00020; }
     </style>
 </head>
 <body>
@@ -103,12 +97,12 @@
             <th>Created</th>
             <th>User</th>
             <th>Image</th>
+            <th>Edit</th>
             <th>Delete</th>
         </tr>
 
         <tr th:each="it : ${items}">
             <td th:text="${it.id}"></td>
-
             <td th:text="${it.type}"></td>
 
             <td>
@@ -126,6 +120,10 @@
             <td>
                 <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
                 <span th:if="${it.imagePath == null}">No image</span>
+            </td>
+
+            <td>
+                <a th:href="@{/lost-items/{id}/edit(id=${it.id})}">Edit</a>
             </td>
 
             <td>

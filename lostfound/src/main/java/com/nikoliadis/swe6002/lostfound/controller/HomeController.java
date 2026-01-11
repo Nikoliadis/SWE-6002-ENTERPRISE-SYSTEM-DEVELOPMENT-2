@@ -24,38 +24,61 @@ public class HomeController {
     public String home(
             @RequestParam(defaultValue = "ALL") String type,
             @RequestParam(defaultValue = "ALL") String status,
+            @RequestParam(value = "q", required = false) String q,
             Model model) {
 
-        String t = type == null ? "ALL" : type.toUpperCase();
-        String s = status == null ? "ALL" : status.toUpperCase();
+        String t = (type == null) ? "ALL" : type.toUpperCase();
+        String s = (status == null) ? "ALL" : status.toUpperCase();
 
         List<LostItem> items;
 
-        boolean filterOpen = "OPEN".equals(s);
+        boolean hasQuery = (q != null && !q.trim().isEmpty());
 
-        if (filterOpen) {
-            // status = OPEN
+        if (hasQuery) {
+            items = lostItemService.search(q.trim());
+
             if ("LOST".equals(t)) {
-                items = lostItemService.findByTypeAndStatus(ItemType.LOST, ItemStatus.OPEN);
+                items = items.stream()
+                        .filter(i -> i.getType() != null && i.getType() == ItemType.LOST)
+                        .toList();
             } else if ("FOUND".equals(t)) {
-                items = lostItemService.findByTypeAndStatus(ItemType.FOUND, ItemStatus.OPEN);
-            } else {
-                items = lostItemService.findByStatus(ItemStatus.OPEN);
+                items = items.stream()
+                        .filter(i -> i.getType() != null && i.getType() == ItemType.FOUND)
+                        .toList();
             }
+
+            if ("OPEN".equals(s)) {
+                items = items.stream()
+                        .filter(i -> i.getStatus() != null && i.getStatus() == ItemStatus.OPEN)
+                        .toList();
+            }
+
         } else {
-            // status = ALL
-            if ("LOST".equals(t)) {
-                items = lostItemService.findByType(ItemType.LOST);
-            } else if ("FOUND".equals(t)) {
-                items = lostItemService.findByType(ItemType.FOUND);
+            boolean filterOpen = "OPEN".equals(s);
+
+            if (filterOpen) {
+                if ("LOST".equals(t)) {
+                    items = lostItemService.findByTypeAndStatus(ItemType.LOST, ItemStatus.OPEN);
+                } else if ("FOUND".equals(t)) {
+                    items = lostItemService.findByTypeAndStatus(ItemType.FOUND, ItemStatus.OPEN);
+                } else {
+                    items = lostItemService.findByStatus(ItemStatus.OPEN);
+                }
             } else {
-                items = lostItemService.findAllSorted();
+                if ("LOST".equals(t)) {
+                    items = lostItemService.findByType(ItemType.LOST);
+                } else if ("FOUND".equals(t)) {
+                    items = lostItemService.findByType(ItemType.FOUND);
+                } else {
+                    items = lostItemService.findAllSorted();
+                }
             }
         }
 
         model.addAttribute("items", items);
         model.addAttribute("selectedType", t);
         model.addAttribute("selectedStatus", s);
+        model.addAttribute("q", q);
 
         return "home";
     }

@@ -30,9 +30,18 @@ public interface LostItemService {
 
     List<LostItem> findByUser(User user);
 
+    List<LostItem> search(String q);
+
     void deleteById(Long id);
 
     Optional<LostItem> findById(Long id);
+
+    LostItem update(Long id,
+                    String title,
+                    String description,
+                    String location,
+                    ItemType type);
+
 
     void toggleStatus(Long id);
 }

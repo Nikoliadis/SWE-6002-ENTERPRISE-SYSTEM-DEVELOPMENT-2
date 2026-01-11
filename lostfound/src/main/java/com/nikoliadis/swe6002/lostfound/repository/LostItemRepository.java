@@ -19,4 +19,7 @@ public interface LostItemRepository extends JpaRepository<LostItem, Long> {
     List<LostItem> findByStatusOrderByCreatedAtDesc(ItemStatus status);
 
     List<LostItem> findByTypeAndStatusOrderByCreatedAtDesc(ItemType type, ItemStatus status);
+
+    List<LostItem> findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCaseOrderByCreatedAtDesc(String title,
+                                                                                                     String location);
 }
