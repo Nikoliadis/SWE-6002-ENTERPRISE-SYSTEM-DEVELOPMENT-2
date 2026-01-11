@@ -11,30 +11,33 @@ public class LostItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 120)
     private String title;
 
+    @Column(length = 500)
     private String description;
 
+    @Column(length = 120)
     private String location;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "image_path", length = 255)
+    private String imagePath;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "item_type", nullable = false)
+    @Column(name = "item_type", nullable = false, length = 10)
     private ItemType type;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private ItemStatus status;
+    @Column(name = "status", nullable = false, length = 10)
+    private ItemStatus status = ItemStatus.OPEN;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    private String imagePath;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    // Getters / Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

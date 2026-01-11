@@ -1,5 +1,6 @@
 package com.nikoliadis.swe6002.lostfound.repository;
 
+import com.nikoliadis.swe6002.lostfound.model.ItemStatus;
 import com.nikoliadis.swe6002.lostfound.model.ItemType;
 import com.nikoliadis.swe6002.lostfound.model.LostItem;
 import com.nikoliadis.swe6002.lostfound.model.User;
@@ -14,4 +15,8 @@ public interface LostItemRepository extends JpaRepository<LostItem, Long> {
     List<LostItem> findAllByOrderByCreatedAtDesc();
 
     List<LostItem> findByTypeOrderByCreatedAtDesc(ItemType type);
+
+    List<LostItem> findByStatusOrderByCreatedAtDesc(ItemStatus status);
+
+    List<LostItem> findByTypeAndStatusOrderByCreatedAtDesc(ItemType type, ItemStatus status);
 }

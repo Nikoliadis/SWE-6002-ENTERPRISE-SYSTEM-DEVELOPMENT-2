@@ -9,11 +9,14 @@
         .active { text-decoration: underline; }
         .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
         .card { border:1px solid #000; padding:12px; border-radius:10px; }
-        .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; }
-        .lost { font-weight:bold; }
-        .found { font-weight:bold; }
-        .open { font-weight:bold; }
-        .resolved { font-weight:bold; }
+        .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; font-weight:bold; }
+        .lost { }
+        .found { }
+
+        /* ✅ STATUS COLORS */
+        .open { color:#0a7a0a; border-color:#0a7a0a; }
+        .resolved { color:#b00020; border-color:#b00020; }
+
         img { width:100%; max-height:180px; object-fit:cover; border-radius:8px; border:1px solid #000; }
         .muted { opacity:0.75; font-size: 13px; }
     </style>
@@ -25,8 +28,6 @@
     <div style="margin-left:auto;"></div>
 
     <a th:href="@{/lost-items/create}">Create Item</a>
-
-    <!-- ✅ σωστό route σύμφωνα με LostItemController: /lost-items/my-items -->
     <a th:href="@{/lost-items/my-items}">My Items</a>
 
     <a th:href="@{/admin/dashboard(tab='users')}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
@@ -37,9 +38,22 @@
 </div>
 
 <div class="filters">
-    <a th:href="@{/home(type='ALL')}" th:classappend="${selectedType == 'ALL'} ? 'active' : ''">All</a>
-    <a th:href="@{/home(type='LOST')}" th:classappend="${selectedType == 'LOST'} ? 'active' : ''">Lost</a>
-    <a th:href="@{/home(type='FOUND')}" th:classappend="${selectedType == 'FOUND'} ? 'active' : ''">Found</a>
+    <!-- Type filters (κρατάνε το status) -->
+    <a th:href="@{/home(type='ALL', status=${selectedStatus})}"
+       th:classappend="${selectedType == 'ALL'} ? 'active' : ''">All</a>
+
+    <a th:href="@{/home(type='LOST', status=${selectedStatus})}"
+       th:classappend="${selectedType == 'LOST'} ? 'active' : ''">Lost</a>
+
+    <a th:href="@{/home(type='FOUND', status=${selectedStatus})}"
+       th:classappend="${selectedType == 'FOUND'} ? 'active' : ''">Found</a>
+
+    <!-- Status filters (κρατάνε το type) -->
+    <a th:href="@{/home(type=${selectedType}, status='OPEN')}"
+       th:classappend="${selectedStatus == 'OPEN'} ? 'active' : ''">OPEN only</a>
+
+    <a th:href="@{/home(type=${selectedType}, status='ALL')}"
+       th:classappend="${selectedStatus == 'ALL'} ? 'active' : ''">Any status</a>
 </div>
 
 <hr/>

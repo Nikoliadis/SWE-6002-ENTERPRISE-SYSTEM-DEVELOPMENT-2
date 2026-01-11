@@ -90,18 +90,28 @@ public class LostItemServiceImpl implements LostItemService {
     }
 
     @Override
+    public List<LostItem> findByStatus(ItemStatus status) {
+        return lostItemRepository.findByStatusOrderByCreatedAtDesc(status);
+    }
+
+    @Override
+    public List<LostItem> findByTypeAndStatus(ItemType type, ItemStatus status) {
+        return lostItemRepository.findByTypeAndStatusOrderByCreatedAtDesc(type, status);
+    }
+
+    @Override
     public List<LostItem> findByUser(User user) {
         return lostItemRepository.findByUser(user);
     }
 
     @Override
-    public Optional<LostItem> findById(Long id) {
-        return lostItemRepository.findById(id);
+    public void deleteById(Long id) {
+        lostItemRepository.deleteById(id);
     }
 
     @Override
-    public void deleteById(Long id) {
-        lostItemRepository.deleteById(id);
+    public Optional<LostItem> findById(Long id) {
+        return lostItemRepository.findById(id);
     }
 
     @Override
