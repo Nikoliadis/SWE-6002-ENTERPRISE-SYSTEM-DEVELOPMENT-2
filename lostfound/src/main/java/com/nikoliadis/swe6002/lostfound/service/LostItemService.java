@@ -6,6 +6,7 @@ import com.nikoliadis.swe6002.lostfound.model.User;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LostItemService {
 
@@ -18,7 +19,13 @@ public interface LostItemService {
 
     List<LostItem> findAll();
 
+    List<LostItem> findAllSorted();
+
+    List<LostItem> findByType(ItemType type);
+
     List<LostItem> findByUser(User user);
+
+    Optional<LostItem> findById(Long id);
 
     void deleteById(Long id);
 }

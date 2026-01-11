@@ -1,19 +1,76 @@
-<!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <title>Lost & Found - Home</title>
+    <meta charset="UTF-8"/>
+    <title>Home</title>
+    <style>
+        .nav { display:flex; gap:12px; align-items:center; margin-bottom:16px; }
+        .filters a { margin-right:10px; font-weight:bold; text-decoration:none; }
+        .active { text-decoration: underline; }
+        .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:12px; }
+        .card { border:1px solid #000; padding:12px; border-radius:10px; }
+        .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; }
+        .lost { font-weight:bold; }
+        .found { font-weight:bold; }
+        img { width:100%; max-height:180px; object-fit:cover; border-radius:8px; border:1px solid #000; }
+        .muted { opacity:0.75; font-size: 13px; }
+    </style>
 </head>
 <body>
-<h1>Lost & Found</h1>
 
-<p>Welcome! You are logged in.</p>
-<p><a th:href="@{/lost-items/create}">Create Lost Item</a></p>
+<div class="nav">
+    <h2 style="margin:0;">Lost & Found</h2>
+    <div style="margin-left:auto;"></div>
 
-<form th:action="@{/logout}" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-    <button type="submit">Logout</button>
-</form>
+    <a th:href="@{/lost-items/create}">Create Item</a>
+
+    <a th:href="@{/my-items}">My Items</a>
+
+    <a th:href="@{/admin/dashboard(tab='users')}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
+
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit">Logout</button>
+    </form>
+</div>
+
+<div class="filters">
+    <a th:href="@{/home(type='ALL')}" th:classappend="${selectedType == 'ALL'} ? 'active' : ''">All</a>
+    <a th:href="@{/home(type='LOST')}" th:classappend="${selectedType == 'LOST'} ? 'active' : ''">Lost</a>
+    <a th:href="@{/home(type='FOUND')}" th:classappend="${selectedType == 'FOUND'} ? 'active' : ''">Found</a>
+</div>
+
+<hr/>
+
+<div class="grid">
+    <div class="card" th:each="it : ${items}">
+        <div>
+            <span class="badge"
+                  th:text="${it.type}"
+                  th:classappend="${it.type.name() == 'LOST'} ? 'lost' : 'found'"></span>
+        </div>
+
+        <h3 th:text="${it.title}" style="margin:8px 0;"></h3>
+
+        <div class="muted">
+            <div th:text="'Location: ' + (it.location != null ? it.location : 'N/A')"></div>
+            <div th:text="'Posted: ' + ${it.createdAt}"></div>
+            <div th:text="'By: ' + ${it.user != null ? it.user.username : 'N/A'}"></div>
+        </div>
+
+        <div style="margin-top:10px;">
+            <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
+            <div th:if="${it.imagePath == null}" class="muted">No image</div>
+        </div>
+
+        <div style="margin-top:10px;">
+            <a th:href="@{/items/{id}(id=${it.id})}">View details</a>
+        </div>
+    </div>
+</div>
+
+<div th:if="${#lists.isEmpty(items)}" class="muted">
+    No items found.
+</div>
 
 </body>
 </html>

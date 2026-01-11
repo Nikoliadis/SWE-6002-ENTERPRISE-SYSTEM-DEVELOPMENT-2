@@ -13,6 +13,9 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
+
+
 
 @Service
 public class LostItemServiceImpl implements LostItemService {
@@ -77,8 +80,23 @@ public class LostItemServiceImpl implements LostItemService {
     }
 
     @Override
+    public List<LostItem> findAllSorted() {
+        return lostItemRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    @Override
+    public List<LostItem> findByType(ItemType type) {
+        return lostItemRepository.findByTypeOrderByCreatedAtDesc(type);
+    }
+
+    @Override
+    public Optional<LostItem> findById(Long id) {
+        return lostItemRepository.findById(id);
+    }
+
+    @Override
     public List<LostItem> findByUser(User user) {
-        return lostItemRepository.findByUser(user);
+        return lostItemRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     @Override
