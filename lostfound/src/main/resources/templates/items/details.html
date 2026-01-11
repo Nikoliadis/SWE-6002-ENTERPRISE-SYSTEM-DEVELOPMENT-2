@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Item Details</title>
+    <style>
+        .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; font-weight:bold; }
+        .open { color:#0a7a0a; border-color:#0a7a0a; }
+        .resolved { color:#b00020; border-color:#b00020; }
+        img { max-width: 420px; height: auto; display:block; border:1px solid #000; border-radius:10px; }
+    </style>
+</head>
+<body>
+
+<h1 th:text="${item.title}">Title</h1>
+
+<div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+    <span class="badge" th:text="${item.type}"></span>
+
+    <span class="badge"
+          th:text="${item.status}"
+          th:classappend="${item.status != null && item.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
+</div>
+
+<div>
+    <p><b>Location:</b> <span th:text="${item.location}"></span></p>
+    <p><b>Description:</b> <span th:text="${item.description}"></span></p>
+    <p><b>Posted:</b> <span th:text="${item.createdAt}"></span></p>
+</div>
+
+<div>
+    <img th:if="${item.imagePath}" th:src="${item.imagePath}" alt="item image"/>
+    <div th:if="${item.imagePath == null}">No image</div>
+</div>
+
+<hr/>
+<a th:href="@{/home}">Back to Home</a>
+
+</body>
+</html>

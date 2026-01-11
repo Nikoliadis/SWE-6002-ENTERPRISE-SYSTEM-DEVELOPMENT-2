@@ -9,6 +9,25 @@
         table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 6px; }
         .error { color: darkred; margin: 10px 0; }
         img { max-width: 120px; height: auto; display: block; }
+
+        .badge {
+            padding:2px 8px;
+            border:1px solid #000;
+            border-radius:999px;
+            font-size:12px;
+            display:inline-block;
+            font-weight:bold;
+        }
+
+        /* STATUS COLORS */
+        .open {
+            color: #0a7a0a;
+            border-color: #0a7a0a;
+        }
+        .resolved {
+            color: #b00020;
+            border-color: #b00020;
+        }
     </style>
 </head>
 <body>
@@ -78,6 +97,7 @@
         <tr>
             <th>ID</th>
             <th>Type</th>
+            <th>Status</th>
             <th>Title</th>
             <th>Location</th>
             <th>Created</th>
@@ -86,16 +106,20 @@
             <th>Delete</th>
         </tr>
 
-
         <tr th:each="it : ${items}">
             <td th:text="${it.id}"></td>
 
             <td th:text="${it.type}"></td>
 
+            <td>
+                <span class="badge"
+                      th:text="${it.status}"
+                      th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
+            </td>
+
             <td th:text="${it.title}"></td>
             <td th:text="${it.location}"></td>
             <td th:text="${it.createdAt}"></td>
-
 
             <td th:text="${it.user != null ? it.user.username : 'N/A'}"></td>
 
