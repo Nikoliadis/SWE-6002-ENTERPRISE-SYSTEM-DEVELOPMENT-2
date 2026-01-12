@@ -33,6 +33,8 @@ public class LostItemServiceImpl implements LostItemService {
                            String description,
                            String location,
                            ItemType type,
+                           String contactEmail,
+                           String contactPhone,
                            MultipartFile image,
                            User user) {
 
@@ -42,8 +44,11 @@ public class LostItemServiceImpl implements LostItemService {
         item.setLocation(location);
         item.setType(type);
         item.setStatus(ItemStatus.OPEN);
+        item.setContactEmail(contactEmail);
+        item.setContactPhone(contactPhone);
         item.setUser(user);
 
+        // handle image (optional)
         if (image != null && !image.isEmpty()) {
             String contentType = image.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
@@ -75,6 +80,57 @@ public class LostItemServiceImpl implements LostItemService {
     }
 
     @Override
+    public void update(Long id,
+                       String title,
+                       String description,
+                       String location,
+                       ItemType type,
+                       String contactEmail,
+                       String contactPhone,
+                       MultipartFile image) {
+
+        LostItem item = lostItemRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Item not found"));
+
+        item.setTitle(title);
+        item.setDescription(description);
+        item.setLocation(location);
+        item.setType(type);
+        item.setContactEmail(contactEmail);
+        item.setContactPhone(contactPhone);
+
+        // image optional (αν δεν δώσεις νέο image, κρατάει το παλιό)
+        if (image != null && !image.isEmpty()) {
+            String contentType = image.getContentType();
+            if (contentType == null || !contentType.startsWith("image/")) {
+                throw new RuntimeException("Only image files are allowed.");
+            }
+
+            String original = StringUtils.cleanPath(image.getOriginalFilename());
+            String ext = "";
+            int dot = original.lastIndexOf('.');
+            if (dot >= 0) ext = original.substring(dot);
+
+            String filename = UUID.randomUUID() + ext;
+
+            try {
+                Path dir = Paths.get(uploadDir).toAbsolutePath().normalize();
+                Files.createDirectories(dir);
+
+                Path target = dir.resolve(filename);
+                Files.copy(image.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+
+                item.setImagePath("/uploads/" + filename);
+
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to save image.", e);
+            }
+        }
+
+        lostItemRepository.save(item);
+    }
+
+    @Override
     public List<LostItem> findAll() {
         return lostItemRepository.findAll();
     }
@@ -101,17 +157,17 @@ public class LostItemServiceImpl implements LostItemService {
 
     @Override
     public List<LostItem> findByUser(User user) {
-        return lostItemRepository.findByUser(user);
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        lostItemRepository.deleteById(id);
+        return lostItemRepository.findByUserOrderByCreatedAtDesc(user);
     }
 
     @Override
     public Optional<LostItem> findById(Long id) {
         return lostItemRepository.findById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        lostItemRepository.deleteById(id);
     }
 
     @Override
@@ -129,29 +185,12 @@ public class LostItemServiceImpl implements LostItemService {
     }
 
     @Override
-    public LostItem update(Long id,
-                           String title,
-                           String description,
-                           String location,
-                           ItemType type) {
-
-        LostItem item = lostItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Item not found"));
-
-        item.setTitle(title);
-        item.setDescription(description);
-        item.setLocation(location);
-        item.setType(type);
-
-        return lostItemRepository.save(item);
-    }
-
-    @Override
     public List<LostItem> search(String q) {
         if (q == null || q.trim().isEmpty()) {
-            return lostItemRepository.findAllByOrderByCreatedAtDesc();
+            return findAllSorted();
         }
-        String s = q.trim();
-        return lostItemRepository.findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCaseOrderByCreatedAtDesc(s, s);
+        String term = q.trim();
+        return lostItemRepository
+                .findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCaseOrderByCreatedAtDesc(term, term);
     }
 }

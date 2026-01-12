@@ -32,12 +32,14 @@ public class LostItemController {
                          @RequestParam(required = false) String description,
                          @RequestParam(required = false) String location,
                          @RequestParam("type") ItemType type,
+                         @RequestParam(required = false) String contactEmail,
+                         @RequestParam(required = false) String contactPhone,
                          @RequestParam(required = false) MultipartFile image,
                          @AuthenticationPrincipal User currentUser,
                          Model model) {
 
         try {
-            lostItemService.create(title, description, location, type, image, currentUser);
+            lostItemService.create(title, description, location, type, contactEmail, contactPhone, image, currentUser);
             return "redirect:/home?created";
         } catch (RuntimeException ex) {
             model.addAttribute("error", ex.getMessage());
@@ -45,14 +47,12 @@ public class LostItemController {
         }
     }
 
-    // ✅ My Items page: /lost-items/my-items
     @GetMapping("/my-items")
     public String myItems(@AuthenticationPrincipal User currentUser, Model model) {
         model.addAttribute("items", lostItemService.findByUser(currentUser));
         return "lostitems/myitems";
     }
 
-    // ✅ Delete item: POST /lost-items/{id}/delete
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable Long id,
                          @AuthenticationPrincipal User currentUser) {
@@ -79,7 +79,6 @@ public class LostItemController {
         return "redirect:/lost-items/my-items?deleted";
     }
 
-    // ✅ Toggle Status: POST /lost-items/{id}/toggle-status
     @PostMapping("/{id}/toggle-status")
     public String toggleStatus(@PathVariable Long id,
                                @AuthenticationPrincipal User currentUser) {
@@ -137,6 +136,9 @@ public class LostItemController {
                        @RequestParam(required = false) String description,
                        @RequestParam(required = false) String location,
                        @RequestParam("type") ItemType type,
+                       @RequestParam(required = false) String contactEmail,
+                       @RequestParam(required = false) String contactPhone,
+                       @RequestParam(required = false) MultipartFile image,
                        @AuthenticationPrincipal User currentUser,
                        Model model) {
 
@@ -158,7 +160,7 @@ public class LostItemController {
         }
 
         try {
-            lostItemService.update(id, title, description, location, type);
+            lostItemService.update(id, title, description, location, type, contactEmail, contactPhone, image);
             return "redirect:/items/" + id + "?updated";
         } catch (RuntimeException ex) {
             model.addAttribute("error", ex.getMessage());

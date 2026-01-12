@@ -96,13 +96,15 @@
             <th>Location</th>
             <th>Created</th>
             <th>User</th>
+            <th>Contact Email</th>
+            <th>Contact Phone</th>
             <th>Image</th>
-            <th>Edit</th>
             <th>Delete</th>
         </tr>
 
         <tr th:each="it : ${items}">
             <td th:text="${it.id}"></td>
+
             <td th:text="${it.type}"></td>
 
             <td>
@@ -117,13 +119,12 @@
 
             <td th:text="${it.user != null ? it.user.username : 'N/A'}"></td>
 
+            <td th:text="${it.contactEmail != null ? it.contactEmail : 'N/A'}"></td>
+            <td th:text="${it.contactPhone != null ? it.contactPhone : 'N/A'}"></td>
+
             <td>
                 <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
                 <span th:if="${it.imagePath == null}">No image</span>
-            </td>
-
-            <td>
-                <a th:href="@{/lost-items/{id}/edit(id=${it.id})}">Edit</a>
             </td>
 
             <td>
@@ -134,6 +135,7 @@
         </tr>
     </table>
 </div>
+
 
 </body>
 </html>

@@ -15,8 +15,19 @@ public interface LostItemService {
                     String description,
                     String location,
                     ItemType type,
+                    String contactEmail,
+                    String contactPhone,
                     MultipartFile image,
                     User user);
+
+    void update(Long id,
+                String title,
+                String description,
+                String location,
+                ItemType type,
+                String contactEmail,
+                String contactPhone,
+                MultipartFile image);
 
     List<LostItem> findAll();
 
@@ -30,18 +41,11 @@ public interface LostItemService {
 
     List<LostItem> findByUser(User user);
 
-    List<LostItem> search(String q);
+    Optional<LostItem> findById(Long id);
 
     void deleteById(Long id);
 
-    Optional<LostItem> findById(Long id);
-
-    LostItem update(Long id,
-                    String title,
-                    String description,
-                    String location,
-                    ItemType type);
-
-
     void toggleStatus(Long id);
+
+    List<LostItem> search(String q);
 }

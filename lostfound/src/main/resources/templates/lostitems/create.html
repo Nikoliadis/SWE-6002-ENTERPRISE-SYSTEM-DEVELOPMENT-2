@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Create Lost Item</title>
-</head>
-<body>
-
-<h1>Create Lost Item</h1>
-
-<p th:if="${error}" th:text="${error}" style="color:red;"></p>
-
 <form th:action="@{/lost-items/create}" method="post" enctype="multipart/form-data">
+
     <div>
         <label>Title</label><br/>
         <input type="text" name="title" required />
@@ -18,10 +8,19 @@
     <div>
         <label>Type</label><br/>
         <select name="type" required>
-            <option value="" disabled selected>Select type</option>
             <option value="LOST">Lost</option>
             <option value="FOUND">Found</option>
         </select>
+    </div>
+
+    <div>
+        <label>Contact Email</label><br/>
+        <input type="email" name="contactEmail" th:value="${defaultEmail}" />
+    </div>
+
+    <div>
+        <label>Contact Phone</label><br/>
+        <input type="text" name="contactPhone" placeholder="+30..." />
     </div>
 
     <div>
@@ -35,14 +34,13 @@
     </div>
 
     <div>
-        <label>Image (optional)</label><br/>
-        <input type="file" name="image" accept="image/*"/>
+        <label>Image</label><br/>
+        <input type="file" name="image" accept="image/*" />
     </div>
 
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
     <button type="submit">Create</button>
+
+    <div th:if="${error}" th:text="${error}" style="color:darkred;margin-top:10px;"></div>
 </form>
-
-<p><a th:href="@{/home}">Back to Home</a></p>
-
-</body>
-</html>

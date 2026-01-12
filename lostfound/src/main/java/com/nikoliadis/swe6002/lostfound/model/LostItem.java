@@ -20,24 +20,31 @@ public class LostItem {
     @Column(length = 120)
     private String location;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "item_type", nullable = false, length = 20)
+    private ItemType type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private ItemStatus status;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "image_path", length = 255)
     private String imagePath;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "item_type", nullable = false, length = 10)
-    private ItemType type;
+    @Column(name = "contact_email", length = 120)
+    private String contactEmail;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 10)
-    private ItemStatus status = ItemStatus.OPEN;
+    @Column(name = "contact_phone", length = 30)
+    private String contactPhone;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    // Getters / Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -50,17 +57,23 @@ public class LostItem {
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }
 
+    public ItemType getType() { return type; }
+    public void setType(ItemType type) { this.type = type; }
+
+    public ItemStatus getStatus() { return status; }
+    public void setStatus(ItemStatus status) { this.status = status; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
     public String getImagePath() { return imagePath; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
 
-    public ItemType getType() { return type; }
-    public void setType(ItemType type) { this.type = type; }
+    public String getContactEmail() { return contactEmail; }
+    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
 
-    public ItemStatus getStatus() { return status; }
-    public void setStatus(ItemStatus status) { this.status = status; }
+    public String getContactPhone() { return contactPhone; }
+    public void setContactPhone(String contactPhone) { this.contactPhone = contactPhone; }
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }

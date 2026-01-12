@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface LostItemRepository extends JpaRepository<LostItem, Long> {
 
-    List<LostItem> findByUser(User user);
-
     List<LostItem> findAllByOrderByCreatedAtDesc();
 
     List<LostItem> findByTypeOrderByCreatedAtDesc(ItemType type);
@@ -20,6 +18,7 @@ public interface LostItemRepository extends JpaRepository<LostItem, Long> {
 
     List<LostItem> findByTypeAndStatusOrderByCreatedAtDesc(ItemType type, ItemStatus status);
 
-    List<LostItem> findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCaseOrderByCreatedAtDesc(String title,
-                                                                                                     String location);
+    List<LostItem> findByUserOrderByCreatedAtDesc(User user);
+
+    List<LostItem> findByTitleContainingIgnoreCaseOrLocationContainingIgnoreCaseOrderByCreatedAtDesc(String title, String location);
 }
