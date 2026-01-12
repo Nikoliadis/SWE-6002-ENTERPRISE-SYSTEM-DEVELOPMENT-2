@@ -1,46 +1,185 @@
-<form th:action="@{/lost-items/create}" method="post" enctype="multipart/form-data">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Create Item</title>
+    <style>
+        :root{
+            --bg:#333333;
 
-    <div>
-        <label>Title</label><br/>
-        <input type="text" name="title" required />
+            /* Dark surfaces */
+            --surface:#1f1f1f;
+            --card:#242424;
+
+            /* Text */
+            --text:#f3f4f6;
+            --muted:rgba(243,244,246,.65);
+
+            /* Borders + shadow */
+            --border:#3a3a3a;
+            --shadow:0 14px 40px rgba(0,0,0,.35);
+
+            /* Accents */
+            --primary:#7c3aed; /* purple */
+            --danger:#ff4d6d;
+        }
+        *{box-sizing:border-box}
+        html, body{min-height:100%}
+        body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+
+        .topbar{
+            background:rgba(31,31,31,.92);
+            backdrop-filter: blur(10px);
+            border-bottom:1px solid var(--border);
+            position:sticky;top:0;z-index:50
+        }
+        .topbar-inner{display:flex;align-items:center;gap:14px;max-width:1100px;margin:0 auto;padding:12px 18px}
+        .brand{text-decoration:none;color:var(--text);font-weight:900;display:flex;align-items:center;gap:10px}
+        .brand-badge{
+            width:34px;height:34px;border-radius:10px;
+            background:linear-gradient(135deg, rgba(124,58,237,.35), rgba(255,255,255,.06));
+            border:1px solid rgba(124,58,237,.35);
+            display:grid;place-items:center;
+            box-shadow:0 10px 22px rgba(0,0,0,.35);
+            font-weight:900;
+            color:var(--text)
+        }
+        .nav-links{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .link{text-decoration:none;color:var(--text);padding:8px 10px;border-radius:10px;border:1px solid transparent}
+        .link:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
+
+        .btn{
+            border:1px solid rgba(255,255,255,.10);
+            background:rgba(255,255,255,.06);
+            color:var(--text);
+            padding:10px 12px;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:900
+        }
+        .btn:hover{background:rgba(255,255,255,.10)}
+        .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .btn-primary:hover{filter:brightness(.95)}
+        .btn-danger{background:rgba(255,77,109,.10);border-color:rgba(255,77,109,.35);color:#ffd1da}
+        .btn-danger:hover{background:rgba(255,77,109,.16)}
+
+        .container{max-width:760px;margin:0 auto;padding:18px}
+        .panel{
+            background:rgba(31,31,31,.88);
+            border:1px solid var(--border);
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            padding:16px
+        }
+        h1{margin:0 0 6px 0;font-size:22px}
+        .small{color:var(--muted);font-size:13px}
+
+        label{font-weight:900;font-size:13px}
+        .field{margin-top:12px}
+        .input, textarea, select{
+            width:100%;
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:12px;
+            padding:10px 12px;
+            outline:none;
+            background:rgba(0,0,0,.25);
+            color:var(--text);
+        }
+        .input::placeholder, textarea::placeholder{color:rgba(243,244,246,.55)}
+        textarea{min-height:110px;resize:vertical}
+        .input:focus, textarea:focus, select:focus{border-color:rgba(124,58,237,.65); box-shadow:0 0 0 3px rgba(124,58,237,.22)}
+        .error{
+            margin:10px 0;
+            padding:10px 12px;
+            border:1px solid rgba(255,77,109,.35);
+            background:rgba(255,77,109,.12);
+            color:#ffe4ea;
+            border-radius:12px;
+            font-weight:800
+        }
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        @media (max-width:700px){.row{grid-template-columns:1fr}}
+        .actions{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+    </style>
+</head>
+<body>
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" th:href="@{/home}">
+            <span class="brand-badge">LF</span>
+            <span>Lost &amp; Found</span>
+        </a>
+
+        <div class="nav-links">
+            <a class="link" th:href="@{/lost-items/create}">Create</a>
+            <a class="link" th:href="@{/lost-items/my-items}">My Items</a>
+            <a class="link" th:href="@{/admin/dashboard(tab='users')}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
+
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button class="btn btn-danger" type="submit">Logout</button>
+            </form>
+        </div>
     </div>
+</div>
 
-    <div>
-        <label>Type</label><br/>
-        <select name="type" required>
-            <option value="LOST">Lost</option>
-            <option value="FOUND">Found</option>
-        </select>
+<div class="container">
+    <div class="panel">
+        <h1>Create Item</h1>
+        <div class="small">Add a Lost/Found post with contact details.</div>
+
+        <div class="error" th:if="${error}" th:text="${error}"></div>
+
+        <form th:action="@{/lost-items/create}" method="post" enctype="multipart/form-data">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+            <div class="field">
+                <label>Title</label>
+                <input class="input" type="text" name="title" required />
+            </div>
+
+            <div class="field">
+                <label>Type</label>
+                <select class="input" name="type" required>
+                    <option value="LOST">Lost</option>
+                    <option value="FOUND">Found</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <textarea class="input" name="description" rows="5" cols="50"></textarea>
+            </div>
+
+            <div class="field">
+                <label>Location</label>
+                <input class="input" type="text" name="location" />
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <label>Contact Email</label>
+                    <input class="input" type="email" name="contactEmail" placeholder="example@mail.com" />
+                </div>
+
+                <div class="field">
+                    <label>Contact Phone</label>
+                    <input class="input" type="text" name="contactPhone" placeholder="+30 69..." />
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Image</label>
+                <input class="input" type="file" name="image" accept="image/*"/>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-primary" type="submit">Create</button>
+                <a class="btn" th:href="@{/home}">Cancel</a>
+            </div>
+        </form>
     </div>
+</div>
 
-    <div>
-        <label>Contact Email</label><br/>
-        <input type="email" name="contactEmail" th:value="${defaultEmail}" />
-    </div>
-
-    <div>
-        <label>Contact Phone</label><br/>
-        <input type="text" name="contactPhone" placeholder="+30..." />
-    </div>
-
-    <div>
-        <label>Description</label><br/>
-        <textarea name="description" rows="5" cols="50"></textarea>
-    </div>
-
-    <div>
-        <label>Location</label><br/>
-        <input type="text" name="location" />
-    </div>
-
-    <div>
-        <label>Image</label><br/>
-        <input type="file" name="image" accept="image/*" />
-    </div>
-
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-    <button type="submit">Create</button>
-
-    <div th:if="${error}" th:text="${error}" style="color:darkred;margin-top:10px;"></div>
-</form>
+</body>
+</html>

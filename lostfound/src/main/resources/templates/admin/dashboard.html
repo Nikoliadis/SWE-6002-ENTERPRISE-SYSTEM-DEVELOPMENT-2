@@ -4,138 +4,264 @@
     <meta charset="UTF-8"/>
     <title>Admin Dashboard</title>
     <style>
-        .tabs a { margin-right: 12px; font-weight: bold; }
-        .active { text-decoration: underline; }
-        table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 6px; }
-        .error { color: darkred; margin: 10px 0; }
-        img { max-width: 120px; height: auto; display: block; }
+        :root{
+            --bg:#333333;
 
-        .badge {
-            padding:2px 8px;
-            border:1px solid #000;
+            /* Dark surfaces */
+            --surface:#1f1f1f;
+            --card:#242424;
+
+            /* Text */
+            --text:#f3f4f6;
+            --muted:rgba(243,244,246,.65);
+
+            /* Borders + shadow */
+            --border:#3a3a3a;
+            --shadow:0 14px 40px rgba(0,0,0,.35);
+
+            /* Accents */
+            --primary:#7c3aed; /* purple */
+            --danger:#ff4d6d;
+
+            --open:#22c55e;
+            --resolved:#ff4d6d;
+        }
+        *{box-sizing:border-box}
+        html, body{min-height:100%}
+        body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+
+        .topbar{
+            background:rgba(31,31,31,.92);
+            backdrop-filter: blur(10px);
+            border-bottom:1px solid var(--border);
+            position:sticky;top:0;z-index:50
+        }
+        .topbar-inner{display:flex;align-items:center;gap:14px;max-width:1100px;margin:0 auto;padding:12px 18px}
+        .brand{text-decoration:none;color:var(--text);font-weight:900;display:flex;align-items:center;gap:10px}
+        .brand-badge{
+            width:34px;height:34px;border-radius:10px;
+            background:linear-gradient(135deg, rgba(124,58,237,.35), rgba(255,255,255,.06));
+            border:1px solid rgba(124,58,237,.35);
+            display:grid;place-items:center;
+            box-shadow:0 10px 22px rgba(0,0,0,.35);
+            font-weight:900;
+            color:var(--text)
+        }
+        .nav-links{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .link{text-decoration:none;color:var(--text);padding:8px 10px;border-radius:10px;border:1px solid transparent}
+        .link:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
+        .btn{
+            border:1px solid rgba(255,255,255,.10);
+            background:rgba(255,255,255,.06);
+            color:var(--text);
+            padding:8px 12px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:900
+        }
+        .btn:hover{background:rgba(255,255,255,.10)}
+        .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .btn-primary:hover{filter:brightness(.95)}
+        .btn-danger{background:rgba(255,77,109,.10);border-color:rgba(255,77,109,.35);color:#ffd1da}
+        .btn-danger:hover{background:rgba(255,77,109,.16)}
+
+        .container{max-width:1100px;margin:0 auto;padding:18px}
+        .panel{
+            background:rgba(31,31,31,.88);
+            border:1px solid var(--border);
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            padding:16px
+        }
+        h1{margin:0 0 8px 0;font-size:22px}
+        .error{
+            color:#ffe4ea;
+            margin:10px 0;
+            padding:10px 12px;
+            border:1px solid rgba(255,77,109,.35);
+            background:rgba(255,77,109,.12);
+            border-radius:12px;
+            font-weight:900
+        }
+        .tabs{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+        .tab{
+            text-decoration:none;
+            padding:8px 12px;
+            border-radius:999px;
+            border:1px solid rgba(255,255,255,.10);
+            background:rgba(255,255,255,.06);
+            color:var(--text);
+            font-weight:900;
+            font-size:13px;
+        }
+        .tab:hover{background:rgba(255,255,255,.10)}
+        .tab.active{border-color:rgba(124,58,237,.55);background:rgba(124,58,237,.18)}
+
+        table{
+            width:100%;
+            border-collapse:separate;
+            border-spacing:0;
+            margin-top:12px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.10);
+            border-radius:14px;
+            background:rgba(0,0,0,.18)
+        }
+        th,td{
+            padding:10px 10px;
+            border-bottom:1px solid rgba(255,255,255,.08);
+            text-align:left;
+            font-size:14px;
+            vertical-align:middle;
+            color:var(--text)
+        }
+        th{background:rgba(255,255,255,.06);font-weight:900}
+        tr:last-child td{border-bottom:none}
+        img{
+            max-width:120px;height:auto;display:block;border-radius:12px;
+            border:1px solid rgba(255,255,255,.12);
+            background:rgba(255,255,255,.06)
+        }
+
+        .badge{
+            padding:4px 10px;
+            border:1px solid rgba(255,255,255,.12);
             border-radius:999px;
             font-size:12px;
             display:inline-block;
-            font-weight:bold;
+            font-weight:900;
+            background:rgba(255,255,255,.06);
+            color:var(--text)
         }
+        .open{color:#dcfce7;border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.12)}
+        .resolved{color:#ffe4ea;border-color:rgba(255,77,109,.35);background:rgba(255,77,109,.12)}
 
-        /* STATUS COLORS */
-        .open { color: #0a7a0a; border-color: #0a7a0a; }
-        .resolved { color: #b00020; border-color: #b00020; }
+        .row-actions{display:flex;gap:8px;flex-wrap:wrap}
     </style>
 </head>
 <body>
 
-<h1>Admin Dashboard</h1>
+<div class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" th:href="@{/home}">
+            <span class="brand-badge">LF</span>
+            <span>Lost &amp; Found</span>
+        </a>
 
-<div>
-    <a th:href="@{/home}">Go to Home</a>
-    <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit">Logout</button>
-    </form>
+        <div class="nav-links">
+            <a class="link" th:href="@{/lost-items/create}">Create</a>
+            <a class="link" th:href="@{/lost-items/my-items}">My Items</a>
+            <a class="link" th:href="@{/admin/dashboard(tab='users')}">Admin</a>
+
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button class="btn btn-danger" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
 </div>
 
-<div class="error" th:if="${error}" th:text="${error}"></div>
+<div class="container">
+    <div class="panel">
+        <h1>Admin Dashboard</h1>
 
-<hr/>
+        <div class="error" th:if="${error}" th:text="${error}"></div>
 
-<div class="tabs">
-    <a th:href="@{/admin/dashboard(tab='users')}"
-       th:classappend="${tab == 'users'} ? 'active' : ''">Users</a>
+        <div class="tabs">
+            <a class="tab" th:href="@{/admin/dashboard(tab='users')}"
+               th:classappend="${tab == 'users'} ? ' active' : ''">Users</a>
 
-    <a th:href="@{/admin/dashboard(tab='items')}"
-       th:classappend="${tab == 'items'} ? 'active' : ''">Lost Items</a>
+            <a class="tab" th:href="@{/admin/dashboard(tab='items')}"
+               th:classappend="${tab == 'items'} ? ' active' : ''">Items</a>
+        </div>
+
+        <!-- USERS TAB -->
+        <div th:if="${tab == 'users'}">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Change Role</th>
+                    <th>Delete</th>
+                </tr>
+
+                <tr th:each="u : ${users}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.role}"></td>
+
+                    <td>
+                        <form th:action="@{/admin/users/{id}/toggle-role(id=${u.id})}" method="post">
+                            <button class="btn btn-primary" type="submit">Toggle USER/ADMIN</button>
+                        </form>
+                    </td>
+
+                    <td>
+                        <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post">
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ITEMS TAB -->
+        <div th:if="${tab == 'items'}">
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Title</th>
+                    <th>Location</th>
+                    <th>Created</th>
+                    <th>User</th>
+                    <th>Contact Email</th>
+                    <th>Contact Phone</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+
+                <tr th:each="it : ${items}">
+                    <td th:text="${it.id}"></td>
+                    <td th:text="${it.type}"></td>
+
+                    <td>
+                        <span class="badge"
+                              th:text="${it.status}"
+                              th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? ' open' : ' resolved'"></span>
+                    </td>
+
+                    <td th:text="${it.title}"></td>
+                    <td th:text="${it.location}"></td>
+                    <td th:text="${it.createdAt}"></td>
+                    <td th:text="${it.user != null ? it.user.username : 'N/A'}"></td>
+
+                    <td th:text="${it.contactEmail != null ? it.contactEmail : 'N/A'}"></td>
+                    <td th:text="${it.contactPhone != null ? it.contactPhone : 'N/A'}"></td>
+
+                    <td>
+                        <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
+                        <span th:if="${it.imagePath == null}">No image</span>
+                    </td>
+
+                    <td>
+                        <div class="row-actions">
+                            <a class="btn" th:href="@{/lost-items/{id}/edit(id=${it.id})}">Edit</a>
+
+                            <form th:action="@{/admin/items/{id}/delete(id=${it.id})}" method="post" style="display:inline;">
+                                <button class="btn btn-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
 </div>
-
-<hr/>
-
-<!-- USERS TAB -->
-<div th:if="${tab == 'users'}">
-    <h2>Users</h2>
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Change Role</th>
-            <th>Delete</th>
-        </tr>
-
-        <tr th:each="u : ${users}">
-            <td th:text="${u.id}"></td>
-            <td th:text="${u.username}"></td>
-            <td th:text="${u.email}"></td>
-            <td th:text="${u.role}"></td>
-
-            <td>
-                <form th:action="@{/admin/users/{id}/toggle-role(id=${u.id})}" method="post">
-                    <button type="submit">Toggle USER/ADMIN</button>
-                </form>
-            </td>
-
-            <td>
-                <form th:action="@{/admin/users/{id}/delete(id=${u.id})}" method="post">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<!-- ITEMS TAB -->
-<div th:if="${tab == 'items'}">
-    <h2>Lost Items</h2>
-
-    <table>
-        <tr>
-            <th>ID</th>
-            <th>Type</th>
-            <th>Status</th>
-            <th>Title</th>
-            <th>Location</th>
-            <th>Created</th>
-            <th>User</th>
-            <th>Contact Email</th>
-            <th>Contact Phone</th>
-            <th>Image</th>
-            <th>Delete</th>
-        </tr>
-
-        <tr th:each="it : ${items}">
-            <td th:text="${it.id}"></td>
-
-            <td th:text="${it.type}"></td>
-
-            <td>
-                <span class="badge"
-                      th:text="${it.status}"
-                      th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
-            </td>
-
-            <td th:text="${it.title}"></td>
-            <td th:text="${it.location}"></td>
-            <td th:text="${it.createdAt}"></td>
-
-            <td th:text="${it.user != null ? it.user.username : 'N/A'}"></td>
-
-            <td th:text="${it.contactEmail != null ? it.contactEmail : 'N/A'}"></td>
-            <td th:text="${it.contactPhone != null ? it.contactPhone : 'N/A'}"></td>
-
-            <td>
-                <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
-                <span th:if="${it.imagePath == null}">No image</span>
-            </td>
-
-            <td>
-                <form th:action="@{/admin/items/{id}/delete(id=${it.id})}" method="post">
-                    <button type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-    </table>
-</div>
-
 
 </body>
 </html>

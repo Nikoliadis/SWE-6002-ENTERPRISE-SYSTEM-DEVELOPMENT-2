@@ -4,95 +4,208 @@
     <meta charset="UTF-8"/>
     <title>My Items</title>
     <style>
-        table, th, td { border: 1px solid #000; border-collapse: collapse; padding: 6px; }
-        img { max-width: 120px; height: auto; display: block; }
-        .badge { padding:2px 8px; border:1px solid #000; border-radius:999px; font-size:12px; display:inline-block; }
+        :root{
+            --bg:#333333;
 
-        .badge {
-            font-weight:bold;
+            /* Dark surfaces */
+            --surface:#1f1f1f;
+            --card:#242424;
+
+            /* Text */
+            --text:#f3f4f6;
+            --muted:rgba(243,244,246,.65);
+
+            /* Borders + shadow */
+            --border:#3a3a3a;
+            --shadow:0 14px 40px rgba(0,0,0,.35);
+
+            /* Accents */
+            --primary:#7c3aed; /* purple */
+            --danger:#ff4d6d;
+
+            --open:#22c55e;
+            --resolved:#ff4d6d;
+        }
+        *{box-sizing:border-box}
+        html, body{min-height:100%}
+        body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text)}
+
+        .topbar{
+            background:rgba(31,31,31,.92);
+            backdrop-filter: blur(10px);
+            border-bottom:1px solid var(--border);
+            position:sticky;top:0;z-index:50
+        }
+        .topbar-inner{display:flex;align-items:center;gap:14px;max-width:1100px;margin:0 auto;padding:12px 18px}
+        .brand{text-decoration:none;color:var(--text);font-weight:900;display:flex;align-items:center;gap:10px}
+        .brand-badge{
+            width:34px;height:34px;border-radius:10px;
+            background:linear-gradient(135deg, rgba(124,58,237,.35), rgba(255,255,255,.06));
+            border:1px solid rgba(124,58,237,.35);
+            display:grid;place-items:center;
+            box-shadow:0 10px 22px rgba(0,0,0,.35);
+            font-weight:900;
+            color:var(--text)
+        }
+        .nav-links{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .link{text-decoration:none;color:var(--text);padding:8px 10px;border-radius:10px;border:1px solid transparent}
+        .link:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.08)}
+
+        .btn{
+            border:1px solid rgba(255,255,255,.10);
+            background:rgba(255,255,255,.06);
+            color:var(--text);
+            padding:8px 12px;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:800
+        }
+        .btn:hover{background:rgba(255,255,255,.10)}
+        .btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+        .btn-primary:hover{filter:brightness(.95)}
+        .btn-danger{background:rgba(255,77,109,.10);border-color:rgba(255,77,109,.35);color:#ffd1da}
+        .btn-danger:hover{background:rgba(255,77,109,.16)}
+
+        .container{max-width:1100px;margin:0 auto;padding:18px}
+        .panel{
+            background:rgba(31,31,31,.88);
+            border:1px solid var(--border);
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            padding:16px
+        }
+        h1{margin:0 0 10px 0;font-size:22px;letter-spacing:.2px}
+        .small{color:var(--muted);font-size:13px}
+
+        table{
+            width:100%;
+            border-collapse:separate;
+            border-spacing:0;
+            margin-top:12px;
+            overflow:hidden;
+            border:1px solid rgba(255,255,255,.10);
+            border-radius:14px;
+            background:rgba(0,0,0,.18)
+        }
+        th,td{
+            padding:10px 10px;
+            border-bottom:1px solid rgba(255,255,255,.08);
+            text-align:left;
+            font-size:14px;
+            vertical-align:middle;
+            color:var(--text)
+        }
+        th{
+            background:rgba(255,255,255,.06);
+            font-weight:900
+        }
+        tr:last-child td{border-bottom:none}
+
+        img{
+            max-width:120px;
+            height:auto;
+            display:block;
+            border-radius:12px;
+            border:1px solid rgba(255,255,255,.12);
+            background:rgba(255,255,255,.06)
         }
 
-        /* STATUS COLORS */
-        .open { color:#0a7a0a; border-color:#0a7a0a; }
-        .resolved { color:#b00020; border-color:#b00020; }
+        .badge{
+            padding:4px 10px;
+            border:1px solid rgba(255,255,255,.12);
+            border-radius:999px;
+            font-size:12px;
+            display:inline-block;
+            font-weight:900;
+            background:rgba(255,255,255,.06);
+            color:var(--text)
+        }
+        .open{color:#dcfce7;border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.12)}
+        .resolved{color:#ffe4ea;border-color:rgba(255,77,109,.35);background:rgba(255,77,109,.12)}
+
+        .row-actions{display:flex;gap:8px;flex-wrap:wrap}
+        .empty{margin-top:12px;color:var(--muted);text-align:center}
     </style>
 </head>
 <body>
 
-<h1>My Items</h1>
+<div class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" th:href="@{/home}">
+            <span class="brand-badge">LF</span>
+            <span>Lost &amp; Found</span>
+        </a>
 
-<div>
-    <a th:href="@{/home}">Back to Home</a>
-    <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit">Logout</button>
-    </form>
+        <div class="nav-links">
+            <a class="link" th:href="@{/lost-items/create}">Create</a>
+            <a class="link" th:href="@{/lost-items/my-items}">My Items</a>
+            <a class="link" th:href="@{/admin/dashboard(tab='users')}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
+
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button class="btn btn-danger" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
 </div>
 
-<hr/>
+<div class="container">
+    <div class="panel">
+        <h1>My Items</h1>
+        <div class="small">Manage your posts: edit details, toggle status, or delete.</div>
 
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Type</th>
-        <th>Status</th>
-        <th>Title</th>
-        <th>Location</th>
-        <th>Created</th>
-        <th>Contact Email</th>
-        <th>Contact Phone</th>
-        <th>Image</th>
-        <th>Edit</th>
-        <th>Toggle Status</th>
-        <th>Delete</th>
-    </tr>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Title</th>
+                <th>Location</th>
+                <th>Created</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
 
-    <tr th:each="it : ${items}">
-        <td th:text="${it.id}"></td>
+            <tr th:each="it : ${items}">
+                <td th:text="${it.id}"></td>
+                <td><span class="badge" th:text="${it.type}"></span></td>
 
-        <td>
-            <span class="badge" th:text="${it.type}"></span>
-        </td>
+                <td>
+                    <span class="badge"
+                          th:text="${it.status}"
+                          th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? ' open' : ' resolved'"></span>
+                </td>
 
-        <td>
-            <span class="badge"
-                  th:text="${it.status}"
-                  th:classappend="${it.status != null && it.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
-        </td>
+                <td th:text="${it.title}"></td>
+                <td th:text="${it.location}"></td>
+                <td th:text="${it.createdAt}"></td>
 
-        <td th:text="${it.title}"></td>
-        <td th:text="${it.location}"></td>
-        <td th:text="${it.createdAt}"></td>
+                <td>
+                    <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
+                    <span th:if="${it.imagePath == null}" class="small">No image</span>
+                </td>
 
-        <td th:text="${it.contactEmail != null ? it.contactEmail : '-'}"></td>
-        <td th:text="${it.contactPhone != null ? it.contactPhone : '-'}"></td>
+                <td>
+                    <div class="row-actions">
+                        <a class="btn" th:href="@{/lost-items/{id}/edit(id=${it.id})}">Edit</a>
 
-        <td>
-            <img th:if="${it.imagePath}" th:src="${it.imagePath}" alt="item image"/>
-            <span th:if="${it.imagePath == null}">No image</span>
-        </td>
+                        <form th:action="@{/lost-items/{id}/toggle-status(id=${it.id})}" method="post" style="display:inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button class="btn btn-primary" type="submit">Toggle</button>
+                        </form>
 
-        <td>
-            <a th:href="@{/lost-items/{id}/edit(id=${it.id})}">Edit</a>
-        </td>
+                        <form th:action="@{/lost-items/{id}/delete(id=${it.id})}" method="post" style="display:inline;">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        </table>
 
-        <td>
-            <form th:action="@{/lost-items/{id}/toggle-status(id=${it.id})}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit">Toggle</button>
-            </form>
-        </td>
-
-        <td>
-            <form th:action="@{/lost-items/{id}/delete(id=${it.id})}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit">Delete</button>
-            </form>
-        </td>
-    </tr>
-</table>
-
-<div th:if="${#lists.isEmpty(items)}">
-    No items yet.
+        <div class="empty" th:if="${#lists.isEmpty(items)}">
+            No items yet.
+        </div>
+    </div>
 </div>
 
 </body>

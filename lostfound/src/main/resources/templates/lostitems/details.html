@@ -4,82 +4,237 @@
     <meta charset="UTF-8"/>
     <title>Item Details</title>
     <style>
-        .wrap { max-width: 900px; margin: 20px auto; }
-        .card { border:1px solid #000; padding:16px; border-radius:12px; }
-        .badges { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px; }
-        .badge {
-            padding:2px 10px;
-            border:1px solid #000;
+        :root{
+            --bg:#333333;
+
+            /* Dark surfaces */
+            --surface:#1f1f1f;
+            --card:#242424;
+
+            /* Text */
+            --text:#f3f4f6;
+            --muted:rgba(243,244,246,.65);
+
+            /* Borders + shadow */
+            --border:#3a3a3a;
+            --shadow:0 14px 40px rgba(0,0,0,.35);
+
+            /* Accents */
+            --primary:#7c3aed;
+            --danger:#ff4d6d;
+
+            --open:#22c55e;
+            --resolved:#ff4d6d;
+        }
+        *{box-sizing:border-box}
+        html, body{min-height:100%}
+        body{
+            margin:0;
+            font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+            background:var(--bg);
+            color:var(--text)
+        }
+
+        .topbar{
+            background:rgba(31,31,31,.92);
+            backdrop-filter: blur(10px);
+            border-bottom:1px solid var(--border);
+            position:sticky;top:0;z-index:50
+        }
+        .topbar-inner{
+            display:flex;align-items:center;gap:14px;
+            max-width:1100px;margin:0 auto;padding:12px 18px
+        }
+        .brand{
+            text-decoration:none;
+            color:var(--text);
+            font-weight:900;
+            display:flex;align-items:center;gap:10px
+        }
+        .brand-badge{
+            width:34px;height:34px;border-radius:10px;
+            background:linear-gradient(135deg, rgba(124,58,237,.35), rgba(255,255,255,.06));
+            border:1px solid rgba(124,58,237,.35);
+            display:grid;place-items:center;
+            box-shadow:0 10px 22px rgba(0,0,0,.35);
+            font-weight:900;
+            color:var(--text)
+        }
+        .nav-links{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+        .link{
+            text-decoration:none;
+            color:var(--text);
+            padding:8px 10px;
+            border-radius:10px;
+            border:1px solid transparent
+        }
+        .link:hover{
+            background:rgba(255,255,255,.06);
+            border-color:rgba(255,255,255,.08)
+        }
+
+        .btn{
+            border:1px solid rgba(255,255,255,.10);
+            background:rgba(255,255,255,.06);
+            color:var(--text);
+            padding:10px 12px;
+            border-radius:12px;
+            cursor:pointer;
+            font-weight:900
+        }
+        .btn:hover{background:rgba(255,255,255,.10)}
+        .btn-primary{
+            background:var(--primary);
+            border-color:var(--primary);
+            color:#fff
+        }
+        .btn-primary:hover{filter:brightness(.95)}
+        .btn-danger{
+            background:rgba(255,77,109,.10);
+            border-color:rgba(255,77,109,.35);
+            color:#ffd1da
+        }
+        .btn-danger:hover{background:rgba(255,77,109,.16)}
+
+        .container{max-width:1100px;margin:0 auto;padding:18px}
+        .panel{
+            background:var(--card);
+            border:1px solid rgba(255,255,255,.10);
+            border-radius:18px;
+            box-shadow:var(--shadow);
+            padding:16px
+        }
+        .grid{display:grid;grid-template-columns: 1.2fr .8fr;gap:14px}
+        @media (max-width:900px){.grid{grid-template-columns:1fr}}
+
+        h1{margin:0 0 8px 0;font-size:22px}
+        .meta{color:rgba(243,244,246,.72);font-size:13px;line-height:1.5}
+
+        /* IMAGE: show full image (no crop) */
+        .img-wrap{
+            width:100%;
+            max-height:420px;
+            border-radius:16px;
+            border:1px solid rgba(255,255,255,.10);
+            background:rgba(255,255,255,.06);
+            overflow:hidden;
+            display:grid;
+            place-items:center;
+        }
+        .img-wrap img{
+            width:100%;
+            height:420px;
+            object-fit:contain; /* IMPORTANT: show full image */
+            display:block;
+            background:transparent;
+        }
+        @media (max-width:900px){
+            .img-wrap{max-height:360px}
+            .img-wrap img{height:360px}
+        }
+
+        .badge{
+            padding:4px 10px;
+            border:1px solid rgba(255,255,255,.12);
             border-radius:999px;
             font-size:12px;
             display:inline-block;
-            font-weight:bold;
+            font-weight:900;
+            background:rgba(255,255,255,.06);
+            color:var(--text)
         }
+        .open{color:#dcfce7;border-color:rgba(34,197,94,.35);background:rgba(34,197,94,.12)}
+        .resolved{color:#ffe4ea;border-color:rgba(255,77,109,.35);background:rgba(255,77,109,.12)}
 
-        .open { color:#0a7a0a; border-color:#0a7a0a; }
-        .resolved { color:#b00020; border-color:#b00020; }
-
-        img { width:100%; max-height:320px; object-fit:cover; border-radius:10px; border:1px solid #000; }
-        .muted { opacity:0.75; font-size: 13px; }
-        .row { margin: 6px 0; }
-        .top { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
-        .top a { text-decoration:none; font-weight:bold; }
+        .section-title{font-weight:900;margin:0 0 8px 0}
+        .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+        .kv{display:grid;grid-template-columns:130px 1fr;gap:8px 10px;font-size:14px}
+        .k{color:rgba(243,244,246,.65);font-weight:900}
+        .v{color:var(--text);font-weight:700}
+        .divider{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
     </style>
 </head>
 <body>
 
-<div class="wrap">
+<div class="topbar">
+    <div class="topbar-inner">
+        <a class="brand" th:href="@{/home}">
+            <span class="brand-badge">LF</span>
+            <span>Lost &amp; Found</span>
+        </a>
 
-    <div class="top">
-        <a th:href="@{/home}">← Back to Home</a>
-        <div style="margin-left:auto;"></div>
-        <form th:action="@{/logout}" method="post" style="display:inline;">
-            <button type="submit">Logout</button>
-        </form>
-    </div>
+        <div class="nav-links">
+            <a class="link" th:href="@{/lost-items/create}" th:if="${#authorization.expression('isAuthenticated()')}">Create</a>
+            <a class="link" th:href="@{/lost-items/my-items}" th:if="${#authorization.expression('isAuthenticated()')}">My Items</a>
+            <a class="link" th:href="@{/admin/dashboard(tab='users')}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Admin</a>
 
-    <div class="card">
-        <div class="badges">
-            <span class="badge" th:text="${item.type}"></span>
-
-            <span class="badge"
-                  th:text="${item.status}"
-                  th:classappend="${item.status != null && item.status.name() == 'OPEN'} ? 'open' : 'resolved'"></span>
-        </div>
-
-        <h2 th:text="${item.title}" style="margin: 8px 0;"></h2>
-
-        <div class="muted">
-            <div class="row" th:text="'Location: ' + (item.location != null ? item.location : 'N/A')"></div>
-            <div class="row" th:text="'Posted: ' + ${item.createdAt}"></div>
-            <div class="row" th:text="'By: ' + (item.user != null ? item.user.username : 'N/A')"></div>
-        </div>
-
-        <hr/>
-
-        <div class="row">
-            <b>Description:</b>
-            <div th:text="${item.description != null ? item.description : 'No description'}"></div>
-        </div>
-
-        <hr/>
-
-        <div class="row">
-            <b>Contact Email:</b>
-            <span th:text="${item.contactEmail != null ? item.contactEmail : 'N/A'}"></span>
-        </div>
-
-        <div class="row">
-            <b>Contact Phone:</b>
-            <span th:text="${item.contactPhone != null ? item.contactPhone : 'N/A'}"></span>
-        </div>
-
-        <div style="margin-top:12px;">
-            <img th:if="${item.imagePath}" th:src="${item.imagePath}" alt="item image"/>
-            <div th:if="${item.imagePath == null}" class="muted">No image</div>
+            <form th:action="@{/logout}" method="post" style="display:inline;" th:if="${#authorization.expression('isAuthenticated()')}">
+                <button class="btn btn-danger" type="submit">Logout</button>
+            </form>
         </div>
     </div>
+</div>
 
+<div class="container">
+    <div class="grid">
+
+        <div class="panel">
+            <h1 th:text="${item.title}">Item title</h1>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+                <span class="badge" th:text="${item.type}"></span>
+                <span class="badge"
+                      th:text="${item.status}"
+                      th:classappend="${item.status != null && item.status.name() == 'OPEN'} ? ' open' : ' resolved'"></span>
+            </div>
+
+            <div class="img-wrap" th:if="${item.imagePath}">
+                <img th:src="${item.imagePath}" alt="item image"/>
+            </div>
+
+            <div class="img-wrap" th:if="${item.imagePath == null}">
+                <img th:src="@{/img/placeholder.png}" alt="no image"/>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-title">Description</div>
+            <div class="meta" th:text="${item.description != null ? item.description : 'No description'}"></div>
+
+            <div class="actions">
+                <a class="btn" th:href="@{/home}">Back to Home</a>
+                <a class="btn btn-primary" th:href="@{/lost-items/{id}/edit(id=${item.id})}"
+                   th:if="${canEdit}">Edit</a>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="section-title">Details</div>
+
+            <div class="kv">
+                <div class="k">Location</div>
+                <div class="v" th:text="${item.location != null ? item.location : 'N/A'}"></div>
+
+                <div class="k">Posted</div>
+                <div class="v" th:text="${item.createdAt}"></div>
+
+                <div class="k">Posted by</div>
+                <div class="v" th:text="${item.user != null ? item.user.username : 'N/A'}"></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="section-title">Contact</div>
+            <div class="kv">
+                <div class="k">Email</div>
+                <div class="v" th:text="${item.contactEmail != null ? item.contactEmail : 'N/A'}"></div>
+
+                <div class="k">Phone</div>
+                <div class="v" th:text="${item.contactPhone != null ? item.contactPhone : 'N/A'}"></div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
 </body>

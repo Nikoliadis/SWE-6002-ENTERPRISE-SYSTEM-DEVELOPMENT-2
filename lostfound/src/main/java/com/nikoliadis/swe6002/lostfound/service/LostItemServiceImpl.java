@@ -48,7 +48,6 @@ public class LostItemServiceImpl implements LostItemService {
         item.setContactPhone(contactPhone);
         item.setUser(user);
 
-        // handle image (optional)
         if (image != null && !image.isEmpty()) {
             String contentType = image.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
@@ -99,7 +98,6 @@ public class LostItemServiceImpl implements LostItemService {
         item.setContactEmail(contactEmail);
         item.setContactPhone(contactPhone);
 
-        // image optional (αν δεν δώσεις νέο image, κρατάει το παλιό)
         if (image != null && !image.isEmpty()) {
             String contentType = image.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
